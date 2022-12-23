@@ -1,4 +1,4 @@
-from utils import TestStates
+from bot.utils import TestStates
 
 
 help_message = 'Для того, чтобы изменить текущее состояние пользователя, ' \

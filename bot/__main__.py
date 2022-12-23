@@ -1,4 +1,5 @@
 import logging
+import os
 
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
@@ -6,21 +7,36 @@ from aiogram.utils import executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
+from aioredis import Redis
+from sqlalchemy.engine import URL  # type: ignore
 
-from config import TOKEN, REDIS_PASSWORD
-from messages import MESSAGES
-from utils import TestStates
+from bot.middlewares.register_check import RegisterCheck
+from bot.middlewares.custom_middleware import CustomMiddleware
+from bot.config import TOKEN, REDIS_PASSWORD, REDIS_HOST, SQLALCHEMY_ASYNC_DB_URI
+from bot.messages import MESSAGES
+from bot.utils import TestStates
+from bot.db import create_async_engine, get_session_maker
 
 
 logging.basicConfig(format=u'%(filename)+13s [ LINE:%(lineno)-4s] %(levelname)-8s [%(asctime)s] %(message)s',
                     level=logging.DEBUG)
 
+async_engine = create_async_engine(SQLALCHEMY_ASYNC_DB_URI)
+session_maker = get_session_maker(async_engine)
+
+redis = Redis(
+        host=REDIS_HOST,
+        password=REDIS_PASSWORD,
+        username=None,
+    )
 
 bot = Bot(token=TOKEN)
-dp = Dispatcher(bot, storage=RedisStorage2(host='telegram-cache', password=REDIS_PASSWORD))
+dp = Dispatcher(bot, storage=RedisStorage2(host=REDIS_HOST, password=REDIS_PASSWORD))
 # dp = Dispatcher(bot, storage=MemoryStorage())
 
 dp.middleware.setup(LoggingMiddleware())
+dp.middleware.setup(CustomMiddleware())
+dp.middleware.setup(RegisterCheck(session_maker=session_maker, redis=redis))
 
 
 @dp.message_handler(state='*', commands=['start'])

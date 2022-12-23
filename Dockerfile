@@ -14,4 +14,5 @@ COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 
 # copy project
-COPY . .
+COPY .env .
+COPY Makefile .
