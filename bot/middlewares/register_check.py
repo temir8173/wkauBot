@@ -17,23 +17,18 @@ class RegisterCheck(BaseMiddleware):
         self.redis = redis
         super().__init__()
 
-
     async def on_process_message(
-        self,
-        message: types.Message,
-        data: Dict[str, Any],
+            self,
+            message: types.Message,
+            data: Dict[str, Any],
     ) -> Any:
         print('register')
-        """ Сама функция для обработки вызова """
         print(message)
-        print(data)
         print(self.session_maker)
-        # session_maker = data['session_maker']
-        # redis = data['redis']
-        # user = event.from_user
-        # if not await is_user_exists(user_id=event.from_user.id, session_maker=session_maker, redis=redis):
-        #     await create_user(user_id=event.from_user.id,
-        #                       username=event.from_user.username, session_maker=session_maker, locale=user.language_code)
-        #     await data['bot'].send_message(event.from_user.id, 'Ты успешно зарегистрирован(а)!')
-        #
-        # return await handler(event, data)
+        user = message.from_user
+        if await is_user_exists(user_id=user.id, session_maker=self.session_maker, redis=self.redis):
+            await create_user(user_id=user.id,
+                              username=user.username, session_maker=self.session_maker, locale=user.language_code)
+            await message.bot.send_message(message.chat.id, 'Ты успешно зарегистрирован(а)!')
+
+        # return await handler(message, data)

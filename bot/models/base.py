@@ -11,7 +11,6 @@ from sqlalchemy.ext.declarative import declarative_base  # type: ignore
 
 
 class CleanModel:
-    id = Column(Integer, primary_key=True)
     created_at = Column(DateTime, default=dt.now())
     updated_at = Column(DateTime, onupdate=dt.now())
 

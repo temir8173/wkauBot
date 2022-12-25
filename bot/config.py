@@ -5,10 +5,12 @@ from sqlalchemy.engine import URL
 # from dotenv import load_dotenv
 
 
+POSTGRES_HOST = 'telegram-db'
+
 if not os.getenv('POSTGRES_USER'):
     from bot.db import setup_env
-
     setup_env()
+    POSTGRES_HOST = 'localhost'
 
 
 # load_dotenv()
@@ -17,7 +19,6 @@ REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
 REDIS_HOST = 'telegram-cache'
 
 POSTGRES_USER = os.getenv("POSTGRES_USER")
-POSTGRES_HOST = 'localhost'
 POSTGRES_DB = os.getenv("POSTGRES_DB")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT") or 5432
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")

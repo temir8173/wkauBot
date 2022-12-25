@@ -12,8 +12,9 @@ from .base import Base # type: ignore
 class User(Base):
     __tablename__ = 'users'
 
+    id = Column(Integer, primary_key=True)
     # Telegram user id
-    user_id = Column(BigInteger, unique=True, nullable=False, primary_key=True)
+    user_id = Column(BigInteger, unique=True, nullable=False)
     username = Column(VARCHAR(32), unique=False, nullable=True)
     # balance = Column(Integer, default=0)
     locale = Column(VARCHAR(2), default='kz')
