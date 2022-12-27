@@ -25,7 +25,6 @@ async def get_user(user_id: int, session_maker: sessionmaker) -> User:
 
 async def create_user(user_id: int, username: str, locale: str, session_maker: sessionmaker) -> None:
     async with session_maker() as session:
-        print(user_id)
         async with session.begin():
             user = User(
                 user_id=user_id,
@@ -33,7 +32,7 @@ async def create_user(user_id: int, username: str, locale: str, session_maker: s
             )
             try:
                 session.add(user)
-                session.commit()
+                await session.commit()
             except ProgrammingError as e:
                 # TODO: add log
                 pass
@@ -41,11 +40,12 @@ async def create_user(user_id: int, username: str, locale: str, session_maker: s
 
 async def is_user_exists(user_id: int, session_maker: sessionmaker, redis: Redis) -> bool:
     res = await redis.get(name='is_user_exists:' + str(user_id))
-    if not res:
+    if not res or not bool(int(res)):
         async with session_maker() as session:
             async with session.begin():
                 sql_res = await session.execute(select(User).where(User.user_id == user_id))
-                await redis.set(name='is_user_exists:' + str(user_id), value=1 if sql_res else 0)
-                return bool(sql_res)
+                user = sql_res.scalar_one_or_none()
+                await redis.set(name='is_user_exists:' + str(user_id), value=1 if user else 0, ex=3600*24)
+                return bool(user)
     else:
-        return bool(res)
+        return bool(int(res))

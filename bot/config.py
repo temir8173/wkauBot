@@ -2,8 +2,6 @@ import os
 
 from sqlalchemy.engine import URL
 
-# from dotenv import load_dotenv
-
 
 POSTGRES_HOST = 'telegram-db'
 
