@@ -27,7 +27,11 @@ class RegisterCheck(BaseMiddleware):
         user = message.from_user
         if not await is_user_exists(user_id=user.id, session_maker=self.session_maker, redis=self.redis):
             await create_user(user_id=user.id,
-                              username=user.username, session_maker=self.session_maker, locale=user.language_code)
+                              username=user.username,
+                              session_maker=self.session_maker,
+                              redis = self.redis,
+                              locale=user.language_code
+                          )
             await message.bot.send_message(message.chat.id, 'Ты успешно зарегистрирован(а)!')
 
         # return await handler(message, data)

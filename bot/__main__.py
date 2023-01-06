@@ -1,7 +1,7 @@
 import logging
 import os
 
-from aiogram import Bot, types
+from aiogram import Bot
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
@@ -25,8 +25,7 @@ session_maker = get_session_maker(async_engine)
 
 redis = Redis(
         host=REDIS_HOST,
-        password=REDIS_PASSWORD,
-        username=None,
+        password=REDIS_PASSWORD
     )
 
 bot = Bot(token=TOKEN)
@@ -41,9 +40,11 @@ dp.middleware.setup(RegisterCheck(session_maker=session_maker, redis=redis))
 async def on_startup(app: web.Application):
     # import middlewares
     # import filters
-    import bot.handlers as handlers
     # middlewares.setup(dp)
     # filters.setup(dp)
+    import bot.handlers as handlers
+
+    handlers.schedule_options.setup(dp)
     handlers.errors.setup(dp)
     handlers.user.setup(dp)
 
