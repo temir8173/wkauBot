@@ -1,5 +1,4 @@
 import logging
-import os
 
 from aiogram import Bot
 from aiogram.dispatcher import Dispatcher
@@ -12,8 +11,6 @@ from aiohttp import web
 from bot.middlewares.register_check import RegisterCheck
 from bot.middlewares.custom_middleware import CustomMiddleware
 from bot.config import TOKEN, REDIS_PASSWORD, REDIS_HOST, SQLALCHEMY_ASYNC_DB_URI
-from bot.messages import MESSAGES
-from bot.utils import TestStates
 from bot.db import create_async_engine, get_session_maker
 
 
