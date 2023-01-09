@@ -25,11 +25,13 @@ redis = Redis(
         password=REDIS_PASSWORD
     )
 
+# PROXY_URL = "http://37.53.103.4:3128"
+
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=RedisStorage2(host=REDIS_HOST, password=REDIS_PASSWORD))
 
 dp.middleware.setup(LoggingMiddleware())
-dp.middleware.setup(CustomMiddleware())
+# dp.middleware.setup(CustomMiddleware(session_maker=session_maker, redis=redis))
 dp.middleware.setup(RegisterCheck(session_maker=session_maker, redis=redis))
 
 
@@ -39,8 +41,10 @@ async def on_startup(app: web.Application):
     # import filters
     # middlewares.setup(dp)
     # filters.setup(dp)
+    print('asasd')
     import bot.handlers as handlers
 
+    print('asasd')
     handlers.schedule_options.setup(dp)
     handlers.errors.setup(dp)
     handlers.user.setup(dp)

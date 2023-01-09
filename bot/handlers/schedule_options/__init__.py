@@ -2,6 +2,10 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram import types, Dispatcher
 
+from bot.repositories.schedule_repository import student_preferences
+from aioredis import Redis
+from sqlalchemy.orm import sessionmaker
+
 
 class FSMStudentScheduleOptions(StatesGroup):
     institute = State()
@@ -18,7 +22,9 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(ask_week, state=FSMStudentScheduleOptions.week)
 
 
-async def cm_start(message: types.Message, state: FSMContext):
+async def cm_start(message: types.Message, state: FSMContext, session: sessionmaker, redis: Redis):
+    options = await student_preferences(message.from_user.id, session, redis)
+    print(options)
     await FSMStudentScheduleOptions.institute.set()
     async with state.proxy() as data:
         await message.reply(str(data)) 
