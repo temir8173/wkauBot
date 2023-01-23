@@ -22,6 +22,8 @@ redis = Redis(
         password=REDIS_PASSWORD
     )
 
+# PROXY_URL = "http://37.53.103.4:3128"
+
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=RedisStorage2(host=REDIS_HOST, password=REDIS_PASSWORD))
 

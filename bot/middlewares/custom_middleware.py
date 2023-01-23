@@ -22,4 +22,3 @@ class CustomMiddleware(BaseMiddleware):
 
     async def on_process_update(self, update: types.Update, data: dict):
         print('Process update')
-
