@@ -1,19 +1,13 @@
 import logging
-import os
 
 from aiogram import Bot
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
-from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from aioredis import Redis
 from aiohttp import web
 
-from bot.middlewares.register_check import RegisterCheck
-from bot.middlewares.custom_middleware import CustomMiddleware
 from bot.config import TOKEN, REDIS_PASSWORD, REDIS_HOST, SQLALCHEMY_ASYNC_DB_URI
-from bot.messages import MESSAGES
-from bot.utils import TestStates
 from bot.db import create_async_engine, get_session_maker
 
 
@@ -31,22 +25,14 @@ redis = Redis(
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=RedisStorage2(host=REDIS_HOST, password=REDIS_PASSWORD))
 
-dp.middleware.setup(LoggingMiddleware())
-dp.middleware.setup(CustomMiddleware())
-dp.middleware.setup(RegisterCheck(session_maker=session_maker, redis=redis))
-
 
 # noinspection PyUnusedLocal
 async def on_startup(app: web.Application):
-    # import middlewares
     # import filters
-    # middlewares.setup(dp)
     # filters.setup(dp)
-    import bot.handlers as handlers
-
-    handlers.schedule_options.setup(dp)
-    handlers.errors.setup(dp)
-    handlers.user.setup(dp)
+    from bot import middlewares, handlers
+    middlewares.setup(dp, session_maker=session_maker, redis=redis)
+    handlers.setup(dp)
 
 
 async def on_shutdown(dispatcher: Dispatcher):

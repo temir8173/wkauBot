@@ -1,6 +1,10 @@
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram import types, Dispatcher
+from sqlalchemy import select
+from sqlalchemy.orm import sessionmaker
+
+from bot.models import User
 
 
 class FSMStudentScheduleOptions(StatesGroup):
@@ -18,7 +22,13 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(ask_week, state=FSMStudentScheduleOptions.week)
 
 
-async def cm_start(message: types.Message, state: FSMContext):
+async def cm_start(message: types.Message, state: FSMContext, session_maker: sessionmaker):
+    async with session_maker() as session:
+        async with session.begin():
+            sql_res = await session.execute(select(User).where(User.user_id == 406772693))
+            user: User = sql_res.scalar_one_or_none()
+            print('user')
+            print(user.username)
     await FSMStudentScheduleOptions.institute.set()
     async with state.proxy() as data:
         await message.reply(str(data)) 
@@ -57,4 +67,4 @@ async def ask_week(message: types.Message, state: FSMContext):
         data['student_week'] = message.text
     async with state.proxy() as data:
         await message.reply(str(data))
-    # await state.finish()
+    await state.finish()
