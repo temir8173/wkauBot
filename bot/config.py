@@ -3,40 +3,35 @@ import os
 from sqlalchemy.engine import URL
 
 
+# load_dotenv()
+TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+REDIS_HOST = 'telegram-cache'
 POSTGRES_HOST = 'telegram-db'
 
 if not os.getenv('POSTGRES_USER'):
     from bot.db import setup_env
     setup_env()
     POSTGRES_HOST = 'localhost'
+    REDIS_HOST = 'localhost'
 
-
-# load_dotenv()
-TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
-REDIS_HOST = 'telegram-cache'
-
-POSTGRES_USER = os.getenv("POSTGRES_USER")
-POSTGRES_DB = os.getenv("POSTGRES_DB")
-POSTGRES_PORT = os.getenv("POSTGRES_PORT") or 5432
-POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-
-
+redis_credentials = {
+    'host': REDIS_HOST,
+    'password': os.getenv("REDIS_PASSWORD"),
+}
+postgres_credentials = {
+    'username': os.getenv("POSTGRES_USER"),
+    'host': POSTGRES_HOST,
+    'database': os.getenv("POSTGRES_DB"),
+    'port': os.getenv("POSTGRES_PORT") or 5432,
+    'password': os.getenv("POSTGRES_PASSWORD"),
+}
 SQLALCHEMY_DB_URI = URL.create(
     "postgresql+pg8000",
-    username=POSTGRES_USER,
-    host=POSTGRES_HOST,
-    database=POSTGRES_DB,
-    port=POSTGRES_PORT,
-    password=POSTGRES_PASSWORD
+    **postgres_credentials
 )
 SQLALCHEMY_ASYNC_DB_URI = URL.create(
     "postgresql+asyncpg",
-    username=POSTGRES_USER,
-    host=POSTGRES_HOST,
-    database=POSTGRES_DB,
-    port=POSTGRES_PORT,
-    password=POSTGRES_PASSWORD
+    **postgres_credentials
 )
 SQLALCHEMY_ECHO = True
 

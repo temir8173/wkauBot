@@ -7,7 +7,7 @@ from aiogram.contrib.fsm_storage.redis import RedisStorage2
 from aioredis import Redis
 from aiohttp import web
 
-from bot.config import TOKEN, REDIS_PASSWORD, REDIS_HOST, SQLALCHEMY_ASYNC_DB_URI
+from bot.config import TOKEN, SQLALCHEMY_ASYNC_DB_URI, redis_credentials
 from bot.db import create_async_engine, get_session_maker
 
 
@@ -17,15 +17,12 @@ logging.basicConfig(format=u'%(filename)+13s [ LINE:%(lineno)-4s] %(levelname)-8
 async_engine = create_async_engine(SQLALCHEMY_ASYNC_DB_URI)
 session_maker = get_session_maker(async_engine)
 
-redis = Redis(
-        host=REDIS_HOST,
-        password=REDIS_PASSWORD
-    )
+redis = Redis(**redis_credentials)
 
 # PROXY_URL = "http://37.53.103.4:3128"
 
 bot = Bot(token=TOKEN)
-dp = Dispatcher(bot, storage=RedisStorage2(host=REDIS_HOST, password=REDIS_PASSWORD))
+dp = Dispatcher(bot, storage=RedisStorage2(**redis_credentials))
 
 
 # noinspection PyUnusedLocal
