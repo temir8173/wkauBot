@@ -2,7 +2,7 @@ from typing import Dict, Any
 
 from aiogram import types
 from aiogram.dispatcher.middlewares import BaseMiddleware
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from aioredis import Redis
 from sqlalchemy.orm import sessionmaker
 
@@ -12,6 +12,10 @@ class CustomMiddleware(BaseMiddleware):
         self.session_maker = session_maker
         self.redis = redis
         super().__init__()
+
+    async def on_pre_process_callback_query(self, callback: CallbackQuery, data: Dict[str, Any]):
+        data["session_maker"] = self.session_maker
+        data["redis"] = self.redis
 
     async def on_pre_process_message(self, message: Message, data: Dict[str, Any]):
         data["session_maker"] = self.session_maker
