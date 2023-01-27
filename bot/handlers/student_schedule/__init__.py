@@ -29,7 +29,7 @@ def setup(dp: Dispatcher):
 
 
 async def ask_institute(callback: CallbackQuery, state: FSMContext, redis: Redis):
-    preference = await student_preferences(callback.message.from_user.id, redis)
+    preference = await student_preferences(callback.from_user.id, redis)
     await state.finish()
     if preference and preference[0].isnumeric() and preference[1].isnumeric() and preference[2].isnumeric():
         await FSMStudentScheduleOptions.group.set()
