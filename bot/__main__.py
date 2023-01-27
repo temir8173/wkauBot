@@ -10,7 +10,6 @@ from aiohttp import web
 from bot.config import TOKEN, SQLALCHEMY_ASYNC_DB_URI, redis_credentials
 from bot.db import create_async_engine, get_session_maker
 
-
 logging.basicConfig(format=u'%(filename)+13s [ LINE:%(lineno)-4s] %(levelname)-8s [%(asctime)s] %(message)s',
                     level=logging.DEBUG)
 

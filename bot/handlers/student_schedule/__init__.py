@@ -20,7 +20,7 @@ class FSMStudentScheduleOptions(StatesGroup):
 
 def setup(dp: Dispatcher):
     dp.register_callback_query_handler(ask_again, text=['ask_again'], state='*')
-    dp.register_message_handler(ask_institute, commands=['studentschedule'], state='*')
+    dp.register_callback_query_handler(ask_institute, text=['studentschedule'], state='*')
     dp.register_callback_query_handler(ask_high_school, state=FSMStudentScheduleOptions.institute)
     dp.register_callback_query_handler(ask_group, state=FSMStudentScheduleOptions.high_school)
     dp.register_callback_query_handler(ask_week, state=FSMStudentScheduleOptions.group)
@@ -28,9 +28,10 @@ def setup(dp: Dispatcher):
     dp.register_callback_query_handler(render_schedule, state=FSMStudentScheduleOptions.day_of_week)
 
 
-async def ask_institute(message: Message, state: FSMContext, redis: Redis):
-    preference = await student_preferences(message.from_user.id, redis)
-    if preference:
+async def ask_institute(callback: CallbackQuery, state: FSMContext, redis: Redis):
+    preference = await student_preferences(callback.message.from_user.id, redis)
+    await state.finish()
+    if preference and preference[0].isnumeric() and preference[1].isnumeric() and preference[2].isnumeric():
         await FSMStudentScheduleOptions.group.set()
         async with state.proxy() as data:
             data['student_institute'] = preference[0]
@@ -39,19 +40,19 @@ async def ask_institute(message: Message, state: FSMContext, redis: Redis):
         institute_name = await get_option_value(int(preference[0]))
         high_school_name = await get_option_value(int(preference[1]), int(preference[0]), 'school')
         group_name = await get_option_value(int(preference[2]), int(preference[1]), 'group')
-        institutes = await re_ask_options(preference[2])
-        await message.reply(
-            '<b>Сіздің таңдауыңыз:</b> \n'
-            f'<b>Институт:</b> {institute_name} \n'
-            f'<b>Жоғарғы мектеп:</b> {high_school_name} \n'
-            f'<b>Топ:</b> {group_name}',
+        re_ask_buttons = await re_ask_options(preference[2])
+        await callback.message.reply(
+            f'📜 <b>Сіздің таңдауыңыз:</b> \n\n'
+            f'✅ <b>Институт:</b> {institute_name} \n'
+            f'✅ <b>Жоғарғы мектеп:</b> {high_school_name} \n'
+            f'✅ <b>Топ:</b> {group_name}',
             parse_mode=ParseMode.HTML,
-            reply_markup=institutes
+            reply_markup=re_ask_buttons
         )
     else:
         await FSMStudentScheduleOptions.institute.set()
         options = await generate_options()
-        await message.reply('Институт таңдаңыз', reply_markup=options)
+        await callback.message.reply('Институт таңдаңыз', reply_markup=options)
 
 
 async def ask_again(callback: CallbackQuery):
@@ -110,9 +111,7 @@ async def render_schedule(callback: CallbackQuery, state: FSMContext, redis: Red
         data['student_day_of_week'] = parent_option_id
         await set_student_preferences(callback.from_user.id, list(data.values()), redis=redis)
 
-    schedule_view = await render_schedule_service.process()
-    await callback.message.reply(schedule_view, parse_mode=ParseMode.HTML)
-    async with state.proxy() as data:
-        await callback.message.reply(str(data))
-    await callback.answer('ok')
-    await state.finish()
+    schedule_view = await render_schedule_service.view_for_student(*list(data.values()))
+    days_of_week = await day_of_week_options()
+    await callback.message.reply(schedule_view, parse_mode=ParseMode.HTML, reply_markup=days_of_week)
+    await callback.answer()
