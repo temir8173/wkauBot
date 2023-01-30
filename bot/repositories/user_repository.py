@@ -1,3 +1,5 @@
+from typing import Union
+
 from redis.asyncio.client import Redis
 from sqlalchemy import Column, Integer, VARCHAR, select, BigInteger, Enum  # type: ignore
 from sqlalchemy.exc import ProgrammingError
@@ -6,7 +8,7 @@ from sqlalchemy.orm import sessionmaker, relationship, selectinload  # type: ign
 from bot.models.user import User
 
 
-async def get_user(user_id: int, session_maker: sessionmaker) -> User:
+async def get_user(user_id: int, session_maker: sessionmaker) -> Union[User, None]:
     """
     Получить пользователя по его id
     :param user_id:
@@ -17,10 +19,17 @@ async def get_user(user_id: int, session_maker: sessionmaker) -> User:
         async with session.begin():
             result = await session.execute(
                 select(User)
-                .options(selectinload(User.posts))
                 .filter(User.user_id == user_id)  # type: ignore
             )
-            return result.scalars().one()
+            return result.scalars().one_or_none()
+
+
+async def update_locale(user_id, locale: str, session_maker: sessionmaker):
+    async with session_maker() as session:
+        async with session.begin():
+            session.execute(User.update()
+                            .values(locale=locale)
+                            .where(User.user_id == user_id))
 
 
 async def create_user(user_id: int, username: str, locale: str, session_maker: sessionmaker, redis: Redis) -> None:

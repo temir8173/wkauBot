@@ -21,7 +21,6 @@ class RegisterCheck(BaseMiddleware):
             data: Dict[str, Any],
     ) -> Any:
         print('register')
-        print(message)
         session_maker: sessionmaker = data['session_maker']
         redis: Redis = data['redis']
         user = message.from_user
@@ -32,6 +31,6 @@ class RegisterCheck(BaseMiddleware):
                               redis=redis,
                               locale=user.language_code
                               )
-            await message.bot.send_message(message.chat.id, 'Ты успешно зарегистрирован(а)!')
+            # await message.bot.send_message(message.chat.id, 'Ты успешно зарегистрирован(а)!')
 
         # return await handler(message, data)

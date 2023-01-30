@@ -1,7 +1,10 @@
 import os
+from pathlib import Path
 
 from sqlalchemy.engine import URL
 
+
+WORKDIR = Path(__file__).parent
 
 # load_dotenv()
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")

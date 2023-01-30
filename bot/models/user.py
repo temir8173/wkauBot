@@ -17,7 +17,7 @@ class User(Base):
     user_id = Column(BigInteger, unique=True, nullable=False)
     username = Column(VARCHAR(32), unique=False, nullable=True)
     # balance = Column(Integer, default=0)
-    locale = Column(VARCHAR(2), default='kz')
+    locale = Column(VARCHAR(2), default='kk')
 
     @property
     def stats(self) -> str:

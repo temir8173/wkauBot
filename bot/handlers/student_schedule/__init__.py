@@ -1,7 +1,7 @@
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram import Dispatcher
-from aiogram.types import CallbackQuery, Message, ParseMode
+from aiogram.types import CallbackQuery, ParseMode
 from aioredis import Redis
 
 from bot.keyboards.inline.ikb_select_options import generate_options, re_ask_options, day_of_week_options

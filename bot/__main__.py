@@ -1,13 +1,14 @@
 import logging
 
 from aiogram import Bot
+from aiogram.contrib.middlewares.i18n import I18nMiddleware
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 from aiogram.contrib.fsm_storage.redis import RedisStorage2
 from aioredis import Redis
 from aiohttp import web
 
-from bot.config import TOKEN, SQLALCHEMY_ASYNC_DB_URI, redis_credentials
+from bot.config import TOKEN, SQLALCHEMY_ASYNC_DB_URI, redis_credentials, WORKDIR
 from bot.db import create_async_engine, get_session_maker
 
 logging.basicConfig(format=u'%(filename)+13s [ LINE:%(lineno)-4s] %(levelname)-8s [%(asctime)s] %(message)s',
