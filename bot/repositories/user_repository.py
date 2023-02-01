@@ -1,10 +1,11 @@
 from typing import Union
 
 from redis.asyncio.client import Redis
-from sqlalchemy import Column, Integer, VARCHAR, select, BigInteger, Enum  # type: ignore
+from sqlalchemy import Column, Integer, VARCHAR, select, BigInteger, Enum, update  # type: ignore
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.orm import sessionmaker, relationship, selectinload  # type: ignore
 
+from bot.models.base import Base
 from bot.models.user import User
 
 
@@ -27,9 +28,9 @@ async def get_user(user_id: int, session_maker: sessionmaker) -> Union[User, Non
 async def update_locale(user_id, locale: str, session_maker: sessionmaker):
     async with session_maker() as session:
         async with session.begin():
-            session.execute(User.update()
-                            .values(locale=locale)
-                            .where(User.user_id == user_id))
+            await session.execute(update(Base.metadata.tables[User.__tablename__])
+                                  .values(locale=locale)
+                                  .where(User.user_id == user_id))
 
 
 async def create_user(user_id: int, username: str, locale: str, session_maker: sessionmaker, redis: Redis) -> None:

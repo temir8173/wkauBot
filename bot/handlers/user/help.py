@@ -1,7 +1,9 @@
+from typing import Union
+
 from aiogram import types
 
 
-async def bot_help(msg: types.Message):
+async def bot_help(msg: types.Message, locale: Union[str, None]):
     text = [
         'Список команд: ',
         '/start - Начать диалог',

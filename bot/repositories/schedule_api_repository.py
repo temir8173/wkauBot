@@ -5,17 +5,18 @@ import aiohttp
 from bot.config import SCHEDULE_API_OPTIONS_URL, SCHEDULE_API_SCHEDULE_URL
 
 
-async def get_options(parent_option_id: int = None, target: str = 'institute') -> list:
+async def get_options(parent_option_id: int = None, target: str = 'institute', locale='kk') -> list:
     async with aiohttp.ClientSession() as session:
         async with session.post(SCHEDULE_API_OPTIONS_URL, data={
             'id': parent_option_id,
-            'target': target
+            'target': target,
+            'lang': locale
         }) as response:
             return await response.json()
 
 
-async def get_option_value(option_id: int, parent_option_id: int = None, target: str = 'institute') -> str:
-    options = await get_options(parent_option_id, target)
+async def get_option_value(option_id: int, parent_option_id: int = None, target: str = 'institute', locale='kk') -> str:
+    options = await get_options(parent_option_id, target, locale)
     for option in options:
         if option['id'] == option_id:
             return option['value']

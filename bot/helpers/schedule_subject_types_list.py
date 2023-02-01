@@ -29,9 +29,7 @@ def get_ru_translation(subject_type: str) -> str:
     return translations[subject_type]
 
 
-def translate(subject_type: str) -> str:
-    # TODO: сделать нормально
-    locale = 'kk'
+def translate(subject_type: str, locale: str) -> str:
     if locale == 'kk':
         return get_kk_translation(subject_type)
     elif locale == 'ru':
