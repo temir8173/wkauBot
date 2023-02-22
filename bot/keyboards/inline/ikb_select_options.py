@@ -52,6 +52,6 @@ async def day_of_week_options(locale: str) -> InlineKeyboardMarkup:
     ikb_wednesday = InlineKeyboardButton(text=wednesday.translate(), callback_data=wednesday.day)
     ikb_thursday = InlineKeyboardButton(text=thursday.translate(), callback_data=thursday.day)
     ikb_friday = InlineKeyboardButton(text=friday.translate(), callback_data=friday.day)
-    ikb_saturday = InlineKeyboardButton(text=saturday.translate(), callback_data=saturday.day())
+    ikb_saturday = InlineKeyboardButton(text=saturday.translate(), callback_data=saturday.day)
 
     return ikbSelectOptions.add(ikb_monday, ikb_tuesday, ikb_wednesday, ikb_thursday, ikb_friday, ikb_saturday)
