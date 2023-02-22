@@ -6,7 +6,7 @@ services:
     tty: true
     build: ./
     restart: always
-#    command: python -m bot
+    command: sh -c "alembic upgrade head && python -m bot"
     volumes:
       - ./bot:/usr/src/app/bot
     env_file: .env
