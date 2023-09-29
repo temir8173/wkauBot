@@ -28,7 +28,6 @@ async def render(schedule: Dict[str, Any], day_of_week: str, mode: int, locale: 
             day_instance = ScheduleDaysList(day_of_week, locale)
             if day_instance.convert_to_schedule_api_format() == day:
                 chosen_day_schedule[time] = schedule['schedule'][time][day]
-
     chosen_day_schedule = dict(sorted(chosen_day_schedule.items()))
 
     view = get_message('schedule_header', locale, mode=mode) + '\n\n'
