@@ -32,7 +32,7 @@ async def render(schedule: Dict[str, Any], day_of_week: str, mode: int, locale: 
 
     view = get_message('schedule_header', locale, mode=mode) + '\n\n'
 
-    for time_index, time_value in schedule['times'].items():
+    for time_index, time_value in enumerate(schedule['times']):
         if int(time_index) > 9:
             continue
 
@@ -46,7 +46,7 @@ async def render(schedule: Dict[str, Any], day_of_week: str, mode: int, locale: 
         teacher_or_group = ''
         place = ''
         subject_key = 'Predmet_kaz' if locale == 'kk' else 'Predmet'
-        for schedule_item in chosen_day_schedule[str(time_index)].values():
+        for schedule_item in chosen_day_schedule[str(time_index)]:
             if subject.find(schedule_item[subject_key]) == -1:
                 subject += f'{schedule_item[subject_key]} / '
                 subject_type += f'{translate(schedule_item["TipZ"], locale)} / '
