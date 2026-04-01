@@ -9,8 +9,8 @@ WORKDIR = Path(__file__).parent
 # load_dotenv()
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 SCHEDULE_API_BASE_URL = os.getenv("SCHEDULE_API_URL")
-SCHEDULE_API_OPTIONS_URL = os.getenv("SCHEDULE_API_URL") + '/options'
-SCHEDULE_API_SCHEDULE_URL = os.getenv("SCHEDULE_API_URL") + '/schedule'
+SCHEDULE_API_OPTIONS_URL = os.getenv("SCHEDULE_API_URL") + '/?path=options'
+SCHEDULE_API_SCHEDULE_URL = os.getenv("SCHEDULE_API_URL") + '/?path=schedule'
 REDIS_HOST = 'telegram-cache'
 POSTGRES_HOST = 'telegram-db'
 

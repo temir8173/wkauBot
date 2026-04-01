@@ -1,8 +1,8 @@
 version: '3.7'
 
 services:
-  web:
-    container_name: telegram-web
+  bot:
+    container_name: telegram-bot
     tty: true
     build: ./
     restart: always
