@@ -9,6 +9,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # install dependencies
+ENV PIP_TRUSTED_HOST="pypi.org pypi.python.org files.pythonhosted.org"
 RUN pip install --upgrade pip
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
